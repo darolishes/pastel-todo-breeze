@@ -70,13 +70,12 @@ export const TodoList = () => {
   }, []);
 
   useEffect(() => {
-    const inactivityTimeout = 5000; // 5 Sekunden
+    const inactivityTimeout = 5000;
     let timeoutId: NodeJS.Timeout;
 
     const checkInactivity = () => {
       const currentTime = Date.now();
       if (currentTime - lastInteractionTime > inactivityTimeout) {
-        // Nacheinander Kategorien schließen
         setExpandedCategories(prev => {
           if (prev.length === 0) return prev;
           return prev.slice(0, -1);
@@ -84,7 +83,7 @@ export const TodoList = () => {
       }
     };
 
-    timeoutId = setInterval(checkInactivity, 1000);
+    timeoutId = setInterval(checkInactivity, 1500); // Längeres Intervall für sanftere Übergänge
 
     return () => clearInterval(timeoutId);
   }, [lastInteractionTime]);
@@ -96,7 +95,7 @@ export const TodoList = () => {
   const categories = ["Heute", "Diese Woche"];
 
   return (
-    <div onClick={handleInteraction}>
+    <div onClick={handleInteraction} className="relative">
       <div className="relative mb-8">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
         <input
@@ -115,38 +114,68 @@ export const TodoList = () => {
         const isExpanded = expandedCategories.includes(category);
 
         return (
-          <div key={category} className="mb-8">
+          <div key={category} className="mb-12 relative">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               {category}
               <span className="text-sm text-muted-foreground">
                 ({categoryTodos.length})
               </span>
             </h2>
-            <div className={`space-y-3 transition-all duration-700 ease-in-out ${isExpanded ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-              {categoryTodos.map((todo, index) => (
-                <div
-                  key={todo.id}
-                  className={`transition-all duration-700 ease-in-out delay-${index * 100} ${
-                    !isExpanded ? 'transform -translate-y-4 opacity-0' : 'transform translate-y-0 opacity-100'
-                  }`}
-                >
+            
+            {/* Gestapelte Karten im Hintergrund */}
+            {!isExpanded && categoryTodos.length > 1 && (
+              <div className="absolute top-[4.5rem] left-0 right-0 z-0">
+                {categoryTodos.slice(1, 3).map((_, idx) => (
+                  <div
+                    key={`stack-${idx}`}
+                    className="bg-white/50 rounded-xl border border-border h-[72px] absolute w-full"
+                    style={{
+                      top: `${idx * 4}px`,
+                      transform: `scale(${0.99 - idx * 0.02})`,
+                      opacity: 0.5 - idx * 0.1,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="relative">
+              {/* Hauptliste mit Animationen */}
+              <div className={`space-y-3 transition-all duration-1000 ease-in-out ${
+                isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+              }`}>
+                {categoryTodos.map((todo, index) => (
+                  <div
+                    key={todo.id}
+                    className={`transition-all duration-1000 ease-in-out`}
+                    style={{
+                      transform: isExpanded ? 'translateY(0)' : 'translateY(-8px)',
+                      opacity: isExpanded ? 1 : 0,
+                      transitionDelay: `${index * 150}ms`,
+                    }}
+                  >
+                    <TodoItem
+                      todo={todo}
+                      onToggle={handleToggle}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Oberste Karte */}
+              {!isExpanded && categoryTodos.length > 0 && (
+                <div className="relative z-10">
                   <TodoItem
-                    todo={todo}
+                    todo={categoryTodos[0]}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
                     onEdit={handleEdit}
                   />
                 </div>
-              ))}
+              )}
             </div>
-            {!isExpanded && categoryTodos.length > 0 && (
-              <TodoItem
-                todo={categoryTodos[0]}
-                onToggle={handleToggle}
-                onDelete={handleDelete}
-                onEdit={handleEdit}
-              />
-            )}
           </div>
         );
       })}
