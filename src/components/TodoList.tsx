@@ -66,7 +66,7 @@ export const TodoList = () => {
   const categories = ["Heute", "Diese Woche"];
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div>
       <div className="relative mb-8">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
         <input
@@ -98,7 +98,7 @@ export const TodoList = () => {
         );
       })}
 
-      <button className="add-button">
+      <button className="fixed bottom-6 right-6 bg-primary text-white rounded-full p-4 shadow-lg hover:bg-primary-hover transition-colors duration-200">
         <Plus size={24} />
       </button>
     </div>
