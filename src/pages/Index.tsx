@@ -6,9 +6,12 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="flex h-screen">
         {/* Linke Seite - Chat */}
-        <div className="w-1/2 border-r border-border p-6 flex flex-col">
+        <div className="w-1/2 border-r border-border p-6 flex flex-col bg-white shadow-lg">
           <h2 className="text-2xl font-semibold mb-6">AI Assistant</h2>
-          <div className="flex-1 overflow-y-auto mb-4">
+          <div className="flex-1 overflow-y-auto mb-4 rounded-xl bg-background p-4">
+            <div className="text-2xl text-muted-foreground/60 text-center mt-20">
+              Ask anything
+            </div>
             {/* Chat Nachrichten werden hier angezeigt */}
           </div>
           <div className="relative">
