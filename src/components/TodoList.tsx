@@ -76,7 +76,11 @@ export const TodoList = () => {
     const checkInactivity = () => {
       const currentTime = Date.now();
       if (currentTime - lastInteractionTime > inactivityTimeout) {
-        setExpandedCategories([]);
+        // Nacheinander Kategorien schließen
+        setExpandedCategories(prev => {
+          if (prev.length === 0) return prev;
+          return prev.slice(0, -1);
+        });
       }
     };
 
@@ -118,12 +122,12 @@ export const TodoList = () => {
                 ({categoryTodos.length})
               </span>
             </h2>
-            <div className={`space-y-3 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+            <div className={`space-y-3 transition-all duration-700 ease-in-out ${isExpanded ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
               {categoryTodos.map((todo, index) => (
                 <div
                   key={todo.id}
-                  className={`transition-all duration-300 ${
-                    !isExpanded && index > 0 ? 'transform -translate-y-4' : ''
+                  className={`transition-all duration-700 ease-in-out delay-${index * 100} ${
+                    !isExpanded ? 'transform -translate-y-4 opacity-0' : 'transform translate-y-0 opacity-100'
                   }`}
                 >
                   <TodoItem
