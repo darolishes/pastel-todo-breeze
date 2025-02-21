@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TodoItem } from "./TodoItem";
 import { Search, Plus } from "lucide-react";
 
@@ -42,22 +42,48 @@ const initialTodos: Todo[] = [
 export const TodoList = () => {
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Heute", "Diese Woche"]);
+  const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
 
   const handleToggle = (id: string) => {
     setTodos(todos.map(todo => 
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     ));
+    setLastInteractionTime(Date.now());
   };
 
   const handleDelete = (id: string) => {
     setTodos(todos.filter(todo => todo.id !== id));
+    setLastInteractionTime(Date.now());
   };
 
   const handleEdit = (id: string, newTitle: string) => {
     setTodos(todos.map(todo =>
       todo.id === id ? { ...todo, title: newTitle } : todo
     ));
+    setLastInteractionTime(Date.now());
   };
+
+  const handleInteraction = useCallback(() => {
+    setLastInteractionTime(Date.now());
+    setExpandedCategories(["Heute", "Diese Woche"]);
+  }, []);
+
+  useEffect(() => {
+    const inactivityTimeout = 5000; // 5 Sekunden
+    let timeoutId: NodeJS.Timeout;
+
+    const checkInactivity = () => {
+      const currentTime = Date.now();
+      if (currentTime - lastInteractionTime > inactivityTimeout) {
+        setExpandedCategories([]);
+      }
+    };
+
+    timeoutId = setInterval(checkInactivity, 1000);
+
+    return () => clearInterval(timeoutId);
+  }, [lastInteractionTime]);
 
   const filteredTodos = todos.filter(todo =>
     todo.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -66,7 +92,7 @@ export const TodoList = () => {
   const categories = ["Heute", "Diese Woche"];
 
   return (
-    <div>
+    <div onClick={handleInteraction}>
       <div className="relative mb-8">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
         <input
@@ -82,18 +108,41 @@ export const TodoList = () => {
         const categoryTodos = filteredTodos.filter(todo => todo.category === category);
         if (categoryTodos.length === 0) return null;
 
+        const isExpanded = expandedCategories.includes(category);
+
         return (
           <div key={category} className="mb-8">
-            <h2 className="text-lg font-semibold mb-4">{category}</h2>
-            {categoryTodos.map(todo => (
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              {category}
+              <span className="text-sm text-muted-foreground">
+                ({categoryTodos.length})
+              </span>
+            </h2>
+            <div className={`space-y-3 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
+              {categoryTodos.map((todo, index) => (
+                <div
+                  key={todo.id}
+                  className={`transition-all duration-300 ${
+                    !isExpanded && index > 0 ? 'transform -translate-y-4' : ''
+                  }`}
+                >
+                  <TodoItem
+                    todo={todo}
+                    onToggle={handleToggle}
+                    onDelete={handleDelete}
+                    onEdit={handleEdit}
+                  />
+                </div>
+              ))}
+            </div>
+            {!isExpanded && categoryTodos.length > 0 && (
               <TodoItem
-                key={todo.id}
-                todo={todo}
+                todo={categoryTodos[0]}
                 onToggle={handleToggle}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
               />
-            ))}
+            )}
           </div>
         );
       })}
