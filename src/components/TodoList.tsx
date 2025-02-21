@@ -83,7 +83,7 @@ export const TodoList = () => {
       }
     };
 
-    timeoutId = setInterval(checkInactivity, 1500); // Längeres Intervall für sanftere Übergänge
+    timeoutId = setInterval(checkInactivity, 2000);
 
     return () => clearInterval(timeoutId);
   }, [lastInteractionTime]);
@@ -128,7 +128,7 @@ export const TodoList = () => {
                 {categoryTodos.slice(1, 3).map((_, idx) => (
                   <div
                     key={`stack-${idx}`}
-                    className="bg-white/50 rounded-xl border border-border h-[72px] absolute w-full"
+                    className="bg-white/50 rounded-xl border border-border h-[72px] absolute w-full transition-all duration-1000 ease-in-out"
                     style={{
                       top: `${idx * 4}px`,
                       transform: `scale(${0.99 - idx * 0.02})`,
@@ -141,17 +141,17 @@ export const TodoList = () => {
 
             <div className="relative">
               {/* Hauptliste mit Animationen */}
-              <div className={`space-y-3 transition-all duration-1000 ease-in-out ${
+              <div className={`space-y-3 transition-all duration-1500 ease-in-out ${
                 isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
               }`}>
                 {categoryTodos.map((todo, index) => (
                   <div
                     key={todo.id}
-                    className={`transition-all duration-1000 ease-in-out`}
+                    className="transition-all duration-1500 ease-in-out"
                     style={{
                       transform: isExpanded ? 'translateY(0)' : 'translateY(-8px)',
                       opacity: isExpanded ? 1 : 0,
-                      transitionDelay: `${index * 150}ms`,
+                      transitionDelay: `${index * 200}ms`,
                     }}
                   >
                     <TodoItem
@@ -166,7 +166,7 @@ export const TodoList = () => {
 
               {/* Oberste Karte */}
               {!isExpanded && categoryTodos.length > 0 && (
-                <div className="relative z-10">
+                <div className="relative z-10 transition-all duration-1500 ease-in-out">
                   <TodoItem
                     todo={categoryTodos[0]}
                     onToggle={handleToggle}
