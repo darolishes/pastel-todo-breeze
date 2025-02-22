@@ -1,7 +1,5 @@
-
 import { useState, useEffect, useCallback } from "react";
-import { TodoItem } from "./TodoItem";
-import { Search, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   DndContext,
   DragEndEvent,
@@ -10,20 +8,10 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
-
-interface Todo {
-  id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  category: string;
-  subtasks?: { id: string; title: string; completed: boolean }[];
-}
+import { arrayMove } from "@dnd-kit/sortable";
+import { TodoSearch } from "./TodoSearch";
+import { TodoCategory } from "./TodoCategory";
+import { Todo } from "@/types/todo";
 
 const initialTodos: Todo[] = [
   {
@@ -58,7 +46,6 @@ export const TodoList = () => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["Heute", "Diese Woche"]);
   const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
 
-  // DnD Sensoren konfigurieren - Jetzt innerhalb der Komponente
   const sensor = useSensor(PointerSensor, {
     activationConstraint: {
       distance: 8,
@@ -137,92 +124,22 @@ export const TodoList = () => {
       onDragEnd={handleDragEnd}
     >
       <div onClick={handleInteraction} className="relative">
-        <div className="relative mb-8">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
-          <input
-            type="text"
-            placeholder="Aufgaben suchen..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="todo-input pl-10"
-          />
-        </div>
+        <TodoSearch value={searchQuery} onChange={setSearchQuery} />
 
         {categories.map(category => {
           const categoryTodos = filteredTodos.filter(todo => todo.category === category);
           if (categoryTodos.length === 0) return null;
 
-          const isExpanded = expandedCategories.includes(category);
-
           return (
-            <div key={category} className="mb-12 relative">
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                {category}
-                <span className="text-sm text-muted-foreground">
-                  ({categoryTodos.length})
-                </span>
-              </h2>
-              
-              {/* Gestapelte Karten im Hintergrund */}
-              {!isExpanded && categoryTodos.length > 1 && (
-                <div className="absolute top-[4.5rem] left-0 right-0 z-0">
-                  {categoryTodos.slice(1, 3).map((_, idx) => (
-                    <div
-                      key={`stack-${idx}`}
-                      className="bg-white/50 rounded-xl border border-border h-[72px] absolute w-full transition-all duration-1000 ease-in-out"
-                      style={{
-                        top: `${idx * 4}px`,
-                        transform: `scale(${0.99 - idx * 0.02})`,
-                        opacity: 0.5 - idx * 0.1,
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
-
-              <div className="relative">
-                {/* Hauptliste mit Animationen */}
-                <div className={`space-y-3 transition-all duration-1500 ease-in-out ${
-                  isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
-                }`}>
-                  <SortableContext
-                    items={categoryTodos.map(todo => todo.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {categoryTodos.map((todo, index) => (
-                      <div
-                        key={todo.id}
-                        className="transition-all duration-1500 ease-in-out"
-                        style={{
-                          transform: isExpanded ? 'translateY(0)' : 'translateY(-8px)',
-                          opacity: isExpanded ? 1 : 0,
-                          transitionDelay: `${index * 200}ms`,
-                        }}
-                      >
-                        <TodoItem
-                          todo={todo}
-                          onToggle={handleToggle}
-                          onDelete={handleDelete}
-                          onEdit={handleEdit}
-                        />
-                      </div>
-                    ))}
-                  </SortableContext>
-                </div>
-
-                {/* Oberste Karte */}
-                {!isExpanded && categoryTodos.length > 0 && (
-                  <div className="relative z-10 transition-all duration-1500 ease-in-out">
-                    <TodoItem
-                      todo={categoryTodos[0]}
-                      onToggle={handleToggle}
-                      onDelete={handleDelete}
-                      onEdit={handleEdit}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
+            <TodoCategory
+              key={category}
+              category={category}
+              todos={categoryTodos}
+              isExpanded={expandedCategories.includes(category)}
+              onToggle={handleToggle}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
           );
         })}
 
