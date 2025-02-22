@@ -1,6 +1,8 @@
 
 import { useState } from "react";
 import { Check, Edit2, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Todo {
   id: string;
@@ -23,13 +25,32 @@ export const TodoItem = ({ todo, onToggle, onDelete, onEdit }: TodoItemProps) =>
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(todo.title);
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: todo.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   const handleEdit = () => {
     onEdit(todo.id, editValue);
     setIsEditing(false);
   };
 
   return (
-    <div className="todo-item animate-fade-in">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="todo-item animate-fade-in cursor-move"
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 flex-1">
           <button
