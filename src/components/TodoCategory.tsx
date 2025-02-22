@@ -34,7 +34,7 @@ export const TodoCategory = ({
           {todos.slice(1, 3).map((_, idx) => (
             <div
               key={`stack-${idx}`}
-              className="bg-secondary/50 rounded-xl border border-border h-[72px] absolute w-full transition-all duration-1000 ease-in-out"
+              className="bg-secondary/50 rounded-xl border border-border h-[72px] absolute w-full transform-gpu transition-all duration-300 ease-out"
               style={{
                 top: `${idx * 4}px`,
                 transform: `scale(${0.99 - idx * 0.02})`,
@@ -46,8 +46,8 @@ export const TodoCategory = ({
       )}
 
       <div className="relative">
-        <div className={`space-y-3 transition-all duration-1500 ease-in-out ${
-          isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+        <div className={`space-y-3 transform-gpu transition-all duration-300 ease-out ${
+          isExpanded ? 'max-h-[1000px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 overflow-hidden'
         }`}>
           <SortableContext
             items={todos.map(todo => todo.id)}
@@ -56,11 +56,11 @@ export const TodoCategory = ({
             {todos.map((todo, index) => (
               <div
                 key={todo.id}
-                className="transition-all duration-1500 ease-in-out"
+                className="transform-gpu transition-all duration-300 ease-out"
                 style={{
-                  transform: isExpanded ? 'translateY(0)' : 'translateY(-8px)',
+                  transform: isExpanded ? 'translateY(0) scale(1)' : 'translateY(-8px) scale(0.95)',
                   opacity: isExpanded ? 1 : 0,
-                  transitionDelay: `${index * 200}ms`,
+                  transitionDelay: `${index * 100}ms`,
                 }}
               >
                 <TodoItem
@@ -75,7 +75,7 @@ export const TodoCategory = ({
         </div>
 
         {!isExpanded && todos.length > 0 && (
-          <div className="relative z-10 transition-all duration-1500 ease-in-out">
+          <div className="relative z-10 transform-gpu transition-all duration-300 ease-out">
             <TodoItem
               todo={todos[0]}
               onToggle={onToggle}
