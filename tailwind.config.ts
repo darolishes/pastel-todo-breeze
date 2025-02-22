@@ -19,36 +19,39 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "#1A1F2C",
+        foreground: "#FFFFFF",
         primary: {
-          DEFAULT: "#4ADE80",
-          hover: "#22C55E",
+          DEFAULT: "#8B5CF6",
+          hover: "#7C3AED",
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#F8F9FA",
-          foreground: "#374151",
+          DEFAULT: "#2A2F3F",
+          foreground: "#E2E8F0",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#FF5757",
+          foreground: "#FFFFFF",
         },
         muted: {
-          DEFAULT: "#F3F4F6",
-          foreground: "#6B7280",
+          DEFAULT: "#374151",
+          foreground: "#94A3B8",
         },
         accent: {
-          DEFAULT: "#4ADE80",
+          DEFAULT: "#D946EF",
           foreground: "#FFFFFF",
         },
         card: {
-          DEFAULT: "#FFFFFF",
-          foreground: "#374151",
+          DEFAULT: "#222837",
+          foreground: "#E2E8F0",
         },
       },
       borderRadius: {
@@ -65,20 +68,10 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "fade-in": {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        "slide-in": {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(0)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.3s ease-out",
-        "slide-in": "slide-in 0.3s ease-out",
       },
     },
   },
