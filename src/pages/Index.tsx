@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { SortableList } from "@/components/SortableList";
+import { SortableList, SortableListItem } from "@/components/SortableList";
 import type { Item } from "@/components/SortableList";
 
 const initialItems: Item[] = [
