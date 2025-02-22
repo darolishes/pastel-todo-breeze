@@ -58,14 +58,14 @@ export const TodoList = () => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["Heute", "Diese Woche"]);
   const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
 
-  // DnD Sensoren konfigurieren
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    })
-  );
+  // DnD Sensoren konfigurieren - Jetzt innerhalb der Komponente
+  const sensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 8,
+    },
+  });
+  
+  const sensors = useSensors(sensor);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
