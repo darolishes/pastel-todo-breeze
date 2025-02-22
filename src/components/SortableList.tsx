@@ -1,17 +1,13 @@
-
 "use client"
 
 import { Dispatch, ReactNode, SetStateAction, useState } from "react"
 import { Trash } from "lucide-react"
 import {
-  AnimatePresence,
-  LayoutGroup,
-  Reorder,
   motion,
-  useDragControls,
-} from "motion/react"
-import useMeasure from "react-use-measure"
-
+  AnimatePresence,
+  LayoutGroup
+} from "framer-motion"
+import { Reorder, useDragControls } from "framer-motion/domMax"
 import { cn } from "@/lib/utils"
 import { Checkbox } from "@/components/ui/checkbox"
 

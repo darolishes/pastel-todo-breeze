@@ -1,32 +1,31 @@
 
 import { useState } from "react";
 import { SortableList } from "@/components/SortableList";
+import type { Item } from "@/components/SortableList";
 
-interface ListItem {
-  id: string;
-  value: string;
-  children?: string;
-}
-
-const initialItems: ListItem[] = [
+const initialItems: Item[] = [
   {
-    id: "1",
-    value: "Erste Aufgabe",
-    children: "Details zur ersten Aufgabe",
+    id: 1,
+    text: "Erste Aufgabe",
+    checked: false,
+    description: "Details zur ersten Aufgabe"
   },
   {
-    id: "2",
-    value: "Zweite Aufgabe",
+    id: 2,
+    text: "Zweite Aufgabe",
+    checked: false,
+    description: ""
   },
   {
-    id: "3",
-    value: "Dritte Aufgabe",
-    children: "Weitere Informationen",
+    id: 3,
+    text: "Dritte Aufgabe",
+    checked: false,
+    description: "Weitere Informationen"
   },
 ];
 
 const Index = () => {
-  const [items, setItems] = useState<ListItem[]>(initialItems);
+  const [items, setItems] = useState<Item[]>(initialItems);
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -37,7 +36,22 @@ const Index = () => {
         
         <SortableList
           items={items}
-          onSort={setItems}
+          setItems={setItems}
+          onCompleteItem={(id) => {
+            setItems(items.map(item =>
+              item.id === id ? { ...item, checked: !item.checked } : item
+            ));
+          }}
+          renderItem={(item, order, onComplete, onRemove) => (
+            <SortableListItem
+              key={item.id}
+              item={item}
+              order={order}
+              onCompleteItem={onComplete}
+              onRemoveItem={onRemove}
+              handleDrag={() => {}}
+            />
+          )}
         />
       </div>
     </div>
