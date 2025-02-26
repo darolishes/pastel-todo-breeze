@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+-e 
+# Private individual user cursor rules
+.cursor/rules/_*.mdc

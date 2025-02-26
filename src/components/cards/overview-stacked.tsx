@@ -124,16 +124,21 @@ function Card(props: { card: Card; stacked: boolean; index: number }) {
       style={{
         //position: props.stacked ? "absolute" : "static",
         width: props.stacked ? `calc(100% - ${props.index * 20}px)` : "auto",
-        zIndex: CARDS.length - props.index,
+        zIndex: props.stacked ? CARDS.length - props.index : 1,
+        transform: props.stacked ? `translateY(${props.index * -8}px)` : "none"
       }}
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: props.stacked ? props.index * -130 : 0 }}
+      animate={{ 
+        opacity: 1, 
+        y: props.stacked ? props.index * -130 : 0,
+        scale: props.stacked ? 0.95 + (props.index * 0.01) : 1
+      }}
       exit={{ opacity: 0, y: -20 }}
       transition={{
         type: "spring",
-        stiffness: 500,
-        damping: 30,
-        mass: 1,
+        stiffness: 400,
+        damping: 40,
+        mass: 0.8
       }}
     >
       <div
